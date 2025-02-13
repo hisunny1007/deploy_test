@@ -16,7 +16,7 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -29,9 +29,9 @@ services:
       # Dockerfile 경로
       context: ./api
       dockerfile: Dockerfile
-    image: ${DOCKERHUB_USRENAME}/api-image:latest
+    image: hisuuny/api-image:latest
     ports:
-      - '8080:8080'
+      - "8080:8080"
     networks:
       - db-network
       - api-network
@@ -47,10 +47,10 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    image: ${DOCKERHUB_USRENAME}/client-image:latest
+    image: hisuuny/client-image:latest
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     networks:
       - api-network
     env_file:
