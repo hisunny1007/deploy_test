@@ -69,11 +69,17 @@ services:
         # src: 캐시 불러올 경로
 
     image: ${DOCKER_USERNAME}/client-image:latest
+    # environment:
+    #   - DOMAIN=3.34.139.205.sslip.io
     ports:
       - "80:80"
       - "443:443"
     networks:
       - api-network
+    volumes:
+      # 인증서 역할을 연결함 (nginx는 client 컨테이너에 있으니까 client 컨테이너에 인증서 공유함)
+      - /etc/letsencrypt/live/3.34.139.205.sslip.io/fullchain.pem:/etc/letsencrypt/live/3.34.139.205.sslip.io/fullchain.pem
+      - /etc/letsencrypt/live/3.34.139.205.sslip.io/privkey.pem:/etc/letsencrypt/live/3.34.139.205.sslip.io/privkey.pem
     env_file:
       - .env
     depends_on:
