@@ -15,6 +15,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 디스코드 웹훅 알림 메세지
+      - name: Discord Notification - Start
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "💙 배포 시작 💙"
+          description: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.event.head_commit.message }}
+          color: 0x0000ff
+
       # 캐시 저장 설정을 위한 action(라이브러리)
       - name: Cache Docker Image Layer
         # actions/cache: 깃허브 캐시 저장소 활용을 위한 라이브러리
@@ -35,6 +47,7 @@ jobs:
           echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
+          echo "DISCORD_WEBHOOK"=${{ secrets.DISCORD_WEBHOOK }}" >> .env
 
       # 도커 BuildKit 엔진 설정 action(라이브러리)
       - name: Set up Docker Buildkit
@@ -87,3 +100,29 @@ jobs:
             docker compose -f docker-compose-actions-cache.yml down
             docker compose -f docker-compose-actions-cache.yml up -d
             docker system prune -f
+
+      # Discord 알림 - 배포 성공
+      - name: Discord Notification - Success
+        if: success()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "✅ 배포 성공!"
+          description: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.event.head_commit.message }}
+          color: 0x00ff00
+
+      # Discord 알림 - 배포 실패
+      - name: Discord Notification - Failure
+        if: failure()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "❌ 배포 실수 "
+          description: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.event.head_commit.message }}
+          color: 0xff0000
