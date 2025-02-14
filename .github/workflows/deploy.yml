@@ -47,7 +47,7 @@ jobs:
           echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
-          echo "DISCORD_WEBHOOK"=${{ secrets.DISCORD_WEBHOOK }}" >> .env
+          echo "DISCORD_WEBHOOK=${{ secrets.DISCORD_WEBHOOK }}" >> .env
 
       # 도커 BuildKit 엔진 설정 action(라이브러리)
       - name: Set up Docker Buildkit
