@@ -25,10 +25,20 @@ services:
   ### 컨테이너명, Dockerfile 경로, 이미지명, 포트(선택), 네트워크, 환경변수파일, 의존관계
   api:
     container_name: api-container
-    build:
+    build: # build 블록 : 이미지 build 관련 설정
       # Dockerfile 경로
       context: ./api
+      cache_to:
+        - type=local,dest=/tmp/.buildx-cache/api,mode=max
+        # type: 캐시의 종류 (local 파일)
+        # dest: 캐시를 불러올 경로(캐시가 저장된 경로)
+        # mode: 캐시의 저장 방식(max: 최대한 많은 캐시 데이터를 저장)
+      # 캐시를 불러올 경로
+      cache_from:
+        - type=local,src=/tmp/.buildx-cache/api
+        # src: 캐시 불러올 경로
       dockerfile: Dockerfile
+      
     image: ${DOCKER_USERNAME}/api-image:latest
     ports:
       - "8080:8080"
@@ -46,7 +56,18 @@ services:
     container_name: client-container
     build:
       context: ./client
+      # 캐시 저장 경로
+      cache_to:
+        - type=local,dest=/tmp/.buildx-cache/client,mode=max
+        # type: 캐시의 종류 (local 파일)
+        # dest: 캐시를 불러올 경로(캐시가 저장된 경로)
+        # mode: 캐시의 저장 방식(max: 최대한 많은 캐시 데이터를 저장)
+      # 캐시를 불러올 경로
+      cache_from:
+        - type=local,src=/tmp/.buildx-cache/client
+        # src: 캐시 불러올 경로
       dockerfile: Dockerfile
+
     image: ${DOCKER_USERNAME}/client-image:latest
     ports:
       - "80:80"
